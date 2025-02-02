@@ -2,6 +2,12 @@ import { useContext } from 'react';
 import { UserContext } from '../contexts/UserContext';
 
 interface User {
+  interests: never[];
+  programOfStudy: string;
+  description: string;
+  studentId: string;
+  lastName: string;
+  firstName: string;
   userId: string;
   email: string | null;
   photoURL: string | null;

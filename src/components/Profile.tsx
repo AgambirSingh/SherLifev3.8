@@ -1,7 +1,4 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { auth, storage, db } from '../config/firebase';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { Camera } from 'lucide-react';
 import { programOptions, interestOptions } from '../data/profileOptions';
 import { useProfile } from '../hooks/useProfile';

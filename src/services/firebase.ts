@@ -11,7 +11,11 @@ import {
   where,
   orderBy,
   setDoc,
-  increment
+  increment,
+  runTransaction,
+  onSnapshot,
+  QuerySnapshot,
+  DocumentData
 } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import type { 
@@ -21,6 +25,7 @@ import type {
   Confession,
   Message 
 } from '../types';
+import { confessionsCollection } from '../data/initializeFirestore';
 
 // User Profile Services
 export const userServices = {
@@ -139,39 +144,102 @@ export const eventServices = {
 };
 
 // Confessions Services
+
+
+// In services/firebase.ts
 export const confessionServices = {
-  async createConfession(confession: Partial<Confession>) {
-    return addDoc(collection(db, 'confessions'), {
+  async createConfession(p0: string, selectedTags: string[], uid: string, confession: Partial<Confession>) {
+    const docRef = await addDoc(confessionsCollection, {
       ...confession,
       upvotes: 0,
       downvotes: 0,
+      reports: 0,
       isFlagged: false,
       createdAt: new Date()
     });
+    return docRef.id;
   },
-
-  async updateVote(confessionId: string, userId: string, isUpvote: boolean) {
-    const confessionRef = doc(db, 'confessions', confessionId);
-    const userVoteRef = doc(db, 'votes', `${confessionId}_${userId}`);
-
-    // Update vote count and store user's vote
-    await updateDoc(confessionRef, {
-      [isUpvote ? 'upvotes' : 'downvotes']: increment(1)
-    });
+  getRealTimeConfessions(callback: (snapshot: QuerySnapshot<DocumentData>) => void) {
+    const q = query(
+      collection(db, 'confessions'),
+      orderBy('createdAt', 'desc')
+    );
     
-    await setDoc(userVoteRef, {
-      userId,
-      confessionId,
-      vote: isUpvote ? 'up' : 'down',
-      timestamp: new Date()
-    });
+    return onSnapshot(q, callback);
   },
 
+  async handleVote(confessionId: string, userId: string, isUpvote: boolean) {
+    const voteDocRef = doc(db, 'votes', `${confessionId}_${userId}`);
+    const confessionRef = doc(db, 'confessions', confessionId);
+
+    return await runTransaction(db, async (transaction) => {
+      const voteDoc = await transaction.get(voteDocRef);
+      const confessionDoc = await transaction.get(confessionRef);
+
+      if (voteDoc.exists()) {
+        throw new Error('You already voted on this confession');
+      }
+
+      transaction.set(voteDocRef, {
+        userId,
+        confessionId,
+        voteType: isUpvote ? 'up' : 'down',
+        timestamp: new Date()
+      });
+
+      transaction.update(confessionRef, {
+        upvotes: isUpvote ? increment(1) : confessionDoc.data()?.upvotes,
+        downvotes: !isUpvote ? increment(1) : confessionDoc.data()?.downvotes
+      });
+    });
+  },
   async flagConfession(confessionId: string) {
     const confessionRef = doc(db, 'confessions', confessionId);
-    await updateDoc(confessionRef, {
-      isFlagged: true,
-      reports: increment(1)
+    await runTransaction(db, async (transaction) => {
+      const doc = await transaction.get(confessionRef);
+      const newReports = (doc.data()?.reports || 0) + 1;
+      
+      transaction.update(confessionRef, {
+        reports: newReports,
+        isFlagged: newReports >= 5
+      });
     });
   }
-}; 
+};
+
+// export const confessionServices = {
+//   async createConfession(confession: Partial<Confession>) {
+//     return addDoc(collection(db, 'confessions'), {
+//       ...confession,
+//       upvotes: 0,
+//       downvotes: 0,
+//       isFlagged: false,
+//       createdAt: new Date()
+//     });
+//   },
+
+//   async updateVote(confessionId: string, userId: string, isUpvote: boolean) {
+//     const confessionRef = doc(db, 'confessions', confessionId);
+//     const userVoteRef = doc(db, 'votes', `${confessionId}_${userId}`);
+
+//     // Update vote count and store user's vote
+//     await updateDoc(confessionRef, {
+//       [isUpvote ? 'upvotes' : 'downvotes']: increment(1)
+//     });
+    
+//     await setDoc(userVoteRef, {
+//       userId,
+//       confessionId,
+//       vote: isUpvote ? 'up' : 'down',
+//       timestamp: new Date()
+//     });
+//   },
+
+//   async flagConfession(confessionId: string) {
+//     const confessionRef = doc(db, 'confessions', confessionId);
+//     await updateDoc(confessionRef, {
+//       isFlagged: true,
+//       reports: increment(1)
+//     });
+//   }
+// }; 

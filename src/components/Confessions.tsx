@@ -1,65 +1,151 @@
-import React, { useState, useCallback } from 'react';
+// import React, { useState, useCallback } from 'react';
+// import { ThumbsUp, ThumbsDown, Flag, Search, Send, AlertTriangle } from 'lucide-react';
+// import type { Confession } from '../types';
+// import { CONFESSION_LISTINGS, CONFESSION_TAGS } from '../data/confessions';
+
+// function Confessions() {
+//   const [confessions, setConfessions] = useState(CONFESSION_LISTINGS);
+//   const [newConfession, setNewConfession] = useState('');
+//   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+//   const [searchQuery, setSearchQuery] = useState('');
+//   const [searchTags, setSearchTags] = useState<string[]>([]);
+
+//   const handleVote = useCallback((confessionId: string, isUpvote: boolean) => {
+//     setConfessions(prev => prev.map(confession => {
+//       if (confession.id === confessionId) {
+//         // If user has already voted, prevent voting again
+//         if (confession.userVote !== null) {
+//           return confession;
+//         }
+
+//         return {
+//           ...confession,
+//           upvotes: isUpvote ? confession.upvotes + 1 : confession.upvotes,
+//           downvotes: !isUpvote ? confession.downvotes + 1 : confession.downvotes,
+//           userVote: isUpvote ? 'up' : 'down'
+//         };
+//       }
+//       return confession;
+//     }));
+//   }, []);
+
+//   const handleFlag = useCallback((confessionId: string) => {
+//     setConfessions(prev => prev.map(confession => {
+//       if (confession.id === confessionId) {
+//         return {
+//           ...confession,
+//           isFlagged: true
+//         };
+//       }
+//       return confession;
+//     }));
+//   }, []);
+
+//   const handleSubmit = useCallback(() => {
+//     if (!newConfession.trim() || selectedTags.length === 0) return;
+
+//     const newPost: Confession = {
+//       id: Date.now().toString(),
+//       content: newConfession,
+//       tags: selectedTags,
+//       upvotes: 0,
+//       downvotes: 0,
+//       createdAt: new Date(),
+//       isFlagged: false,
+//       userVote: null
+//     };
+
+//     setConfessions(prev => [newPost, ...prev]);
+//     setNewConfession('');
+//     setSelectedTags([]);
+//   }, [newConfession, selectedTags]);
+
+//   const filteredConfessions = confessions.filter(confession => {
+//     const matchesSearch = confession.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
+//       confession.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+//     const matchesTags = searchTags.length === 0 || 
+//       searchTags.some(tag => confession.tags.includes(tag));
+//     return matchesSearch && matchesTags;
+//   });
+
+import React, { useState, useCallback, useEffect } from 'react';
 import { ThumbsUp, ThumbsDown, Flag, Search, Send, AlertTriangle } from 'lucide-react';
+import { confessionServices } from '../services/firebase';
+import { auth } from '../config/firebase';
 import type { Confession } from '../types';
-import { CONFESSION_LISTINGS, CONFESSION_TAGS } from '../data/confessions';
+import { CONFESSION_TAGS } from '../data/confessions';
 
 function Confessions() {
-  const [confessions, setConfessions] = useState(CONFESSION_LISTINGS);
+  const [confessions, setConfessions] = useState<Confession[]>([]);
   const [newConfession, setNewConfession] = useState('');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchTags, setSearchTags] = useState<string[]>([]);
 
-  const handleVote = useCallback((confessionId: string, isUpvote: boolean) => {
-    setConfessions(prev => prev.map(confession => {
-      if (confession.id === confessionId) {
-        // If user has already voted, prevent voting again
-        if (confession.userVote !== null) {
-          return confession;
-        }
+  // Fetch confessions from Firebase
+  useEffect(() => {
+    const unsubscribe = confessionServices.getRealTimeConfessions((snapshot) => {
+      const data = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        createdAt: doc.data().createdAt?.toDate()
+      } as Confession));
+      setConfessions(data);
+    });
 
-        return {
-          ...confession,
-          upvotes: isUpvote ? confession.upvotes + 1 : confession.upvotes,
-          downvotes: !isUpvote ? confession.downvotes + 1 : confession.downvotes,
-          userVote: isUpvote ? 'up' : 'down'
-        };
-      }
-      return confession;
-    }));
+    return () => unsubscribe();
   }, []);
 
-  const handleFlag = useCallback((confessionId: string) => {
-    setConfessions(prev => prev.map(confession => {
-      if (confession.id === confessionId) {
-        return {
-          ...confession,
-          isFlagged: true
-        };
-      }
-      return confession;
-    }));
+  const handleVote = useCallback(async (confessionId: string, isUpvote: boolean) => {
+    const userId = auth.currentUser?.uid;
+    if (!userId) {
+      alert('Please login to vote');
+      return;
+    }
+
+    try {
+      await confessionServices.handleVote(confessionId, userId, isUpvote);
+    } catch (error) {
+      console.error('Voting failed:', error);
+    }
   }, []);
 
-  const handleSubmit = useCallback(() => {
+  const handleFlag = useCallback(async (confessionId: string) => {
+    try {
+      await confessionServices.flagConfession(confessionId);
+    } catch (error) {
+      console.error('Flagging failed:', error);
+    }
+  }, []);
+
+  const handleSubmit = useCallback(async () => {
     if (!newConfession.trim() || selectedTags.length === 0) return;
+    if (!auth.currentUser) {
+      alert('Please login to post');
+      return;
+    }
 
-    const newPost: Confession = {
-      id: Date.now().toString(),
-      content: newConfession,
-      tags: selectedTags,
-      upvotes: 0,
-      downvotes: 0,
-      createdAt: new Date(),
-      isFlagged: false,
-      userVote: null
-    };
-
-    setConfessions(prev => [newPost, ...prev]);
-    setNewConfession('');
-    setSelectedTags([]);
+    try {
+      await confessionServices.createConfession(
+        newConfession.trim(),
+        selectedTags,
+        auth.currentUser.uid,
+        {
+          content: newConfession.trim(),
+          tags: selectedTags,
+          userVote: null,
+          isFlagged: false,
+          createdAt: new Date()
+        }
+      );
+      setNewConfession('');
+      setSelectedTags([]);
+    } catch (error) {
+      console.error('Posting failed:', error);
+    }
   }, [newConfession, selectedTags]);
 
+  // Keep existing filter logic (now works with Firebase data)
   const filteredConfessions = confessions.filter(confession => {
     const matchesSearch = confession.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
       confession.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
@@ -67,7 +153,6 @@ function Confessions() {
       searchTags.some(tag => confession.tags.includes(tag));
     return matchesSearch && matchesTags;
   });
-
   return (
     <div className="space-y-6">
       {/* Search Navigation */}
