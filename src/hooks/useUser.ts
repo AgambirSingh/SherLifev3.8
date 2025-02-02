@@ -11,7 +11,7 @@ interface User {
   userId: string;
   email: string | null;
   photoURL: string | null;
-  // ... other user properties
+ 
 }
 
 interface UserContextType {

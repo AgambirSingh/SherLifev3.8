@@ -144,20 +144,21 @@ export const eventServices = {
 };
 
 // Confessions Services
-
-
-// In services/firebase.ts
 export const confessionServices = {
-  async createConfession(p0: string, selectedTags: string[], uid: string, confession: Partial<Confession>) {
-    const docRef = await addDoc(confessionsCollection, {
-      ...confession,
-      upvotes: 0,
-      downvotes: 0,
-      reports: 0,
-      isFlagged: false,
-      createdAt: new Date()
-    });
-    return docRef.id;
+  async createConfession(p0: string, selectedTags: string[], userId: string, confessionData: Partial<Confession>) {
+    try {
+      const docRef = await addDoc(collection(db, 'confessions'), {
+        ...confessionData,
+        upvotes: 0,
+        downvotes: 0,
+        reports: 0,
+        isFlagged: false,
+        createdAt: new Date(),
+        userId, // Save userId in the confession document
+        });
+    } catch (error) {
+      console.error('Error adding document: ', error);
+    }
   },
   getRealTimeConfessions(callback: (snapshot: QuerySnapshot<DocumentData>) => void) {
     const q = query(
@@ -206,40 +207,3 @@ export const confessionServices = {
     });
   }
 };
-
-// export const confessionServices = {
-//   async createConfession(confession: Partial<Confession>) {
-//     return addDoc(collection(db, 'confessions'), {
-//       ...confession,
-//       upvotes: 0,
-//       downvotes: 0,
-//       isFlagged: false,
-//       createdAt: new Date()
-//     });
-//   },
-
-//   async updateVote(confessionId: string, userId: string, isUpvote: boolean) {
-//     const confessionRef = doc(db, 'confessions', confessionId);
-//     const userVoteRef = doc(db, 'votes', `${confessionId}_${userId}`);
-
-//     // Update vote count and store user's vote
-//     await updateDoc(confessionRef, {
-//       [isUpvote ? 'upvotes' : 'downvotes']: increment(1)
-//     });
-    
-//     await setDoc(userVoteRef, {
-//       userId,
-//       confessionId,
-//       vote: isUpvote ? 'up' : 'down',
-//       timestamp: new Date()
-//     });
-//   },
-
-//   async flagConfession(confessionId: string) {
-//     const confessionRef = doc(db, 'confessions', confessionId);
-//     await updateDoc(confessionRef, {
-//       isFlagged: true,
-//       reports: increment(1)
-//     });
-//   }
-// }; 
