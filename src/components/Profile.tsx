@@ -98,149 +98,177 @@ function Profile() {
     }
   };
 
-  if (loading && !profile) return <div>Loading...</div>;
-  if (!profile) return <div>No profile found</div>;
+  if (loading && !profile) return <div className="flex items-center justify-center min-h-[400px]">Loading...</div>;
+  if (!profile) return <div className="flex items-center justify-center min-h-[400px]">No profile found</div>;
 
   return (
-    <div className="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow">
-      <h2 className="text-2xl font-bold mb-6">Profile Settings</h2>
-      
-      {error && (
-        <div className="mb-4 p-3 bg-red-50 text-red-500 rounded-md">
-          {error}
-        </div>
-      )}
+    <div className="max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-md">
+      <div className="p-6 sm:p-8">
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Profile Settings</h2>
+        
+        {error && (
+          <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-md">
+            {error}
+          </div>
+        )}
 
-      {successMessage && (
-        <div className="mb-4 p-3 bg-green-50 text-green-600 rounded-md transition-opacity duration-500">
-          {successMessage}
-        </div>
-      )}
+        {successMessage && (
+          <div className="mb-6 p-4 bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-md">
+            {successMessage}
+          </div>
+        )}
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="mb-6 flex justify-center">
-          <div className="relative">
-            <img
-              src={imagePreview || profile.photoURL || '/default-avatar.jpg'}
-              alt="Profile"
-              className="w-32 h-32 rounded-full object-cover border-2 border-gray-200"
-            />
-            <label
-              htmlFor="photo-upload"
-              className="absolute bottom-0 right-0 bg-white rounded-full p-2 shadow-lg cursor-pointer hover:bg-gray-50 border border-gray-200"
-            >
-              <Camera className="w-5 h-5 text-gray-600" />
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="flex justify-center mb-6">
+            <div className="relative">
+              <div className="w-32 h-32 rounded-full overflow-hidden border-2 border-gray-200 dark:border-gray-700">
+                <img
+                  src={imagePreview || profile.photoURL || '/default-avatar.jpg'}
+                  alt="Profile"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <label
+                htmlFor="photo-upload"
+                className="absolute bottom-0 right-0 bg-white dark:bg-gray-700 rounded-full p-2 shadow-md cursor-pointer
+                 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors border border-gray-200 dark:border-gray-600"
+              >
+                <Camera className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+                <input
+                  type="file"
+                  id="photo-upload"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+              </label>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                First Name
+              </label>
               <input
-                type="file"
-                id="photo-upload"
-                accept="image/*"
-                onChange={handleImageChange}
-                className="hidden"
+                type="text"
+                value={formData.firstName ?? profile.firstName}
+                onChange={(e) => handleInputChange('firstName', e.target.value)}
+                className="w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600
+                 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2
+                  focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
               />
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                Last Name
+              </label>
+              <input
+                type="text"
+                value={formData.lastName ?? profile.lastName}
+                onChange={(e) => handleInputChange('lastName', e.target.value)}
+                className="w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600
+                 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2
+                  focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                Student ID
+              </label>
+              <input
+                type="text"
+                value={formData.studentId ?? profile.studentId}
+                onChange={(e) => handleInputChange('studentId', e.target.value)}
+                className="w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600
+                 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2
+                  focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                Program of Study
+              </label>
+              <select
+                value={formData.programOfStudy ?? profile.programOfStudy}
+                onChange={(e) => handleInputChange('programOfStudy', e.target.value)}
+                className="w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600
+                 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2
+                  focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
+              >
+                <option value="">Select a program</option>
+                {programOptions.map((program) => (
+                  <option key={program} value={program}>{program}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Interests
             </label>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">First Name</label>
-            <input
-              type="text"
-              value={formData.firstName ?? profile.firstName}
-              onChange={(e) => handleInputChange('firstName', e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Last Name</label>
-            <input
-              type="text"
-              value={formData.lastName ?? profile.lastName}
-              onChange={(e) => handleInputChange('lastName', e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Student ID</label>
-            <input
-              type="text"
-              value={formData.studentId ?? profile.studentId}
-              onChange={(e) => handleInputChange('studentId', e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Program of Study</label>
-            <select
-              value={formData.programOfStudy ?? profile.programOfStudy}
-              onChange={(e) => handleInputChange('programOfStudy', e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-            >
-              <option value="">Select a program</option>
-              {programOptions.map((program) => (
-                <option key={program} value={program}>{program}</option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Interests</label>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-            {interestOptions.map((interest) => (
-              <label key={interest} className="relative flex items-start py-2">
-                <div className="min-w-0 flex-1 text-sm">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              {interestOptions.map((interest) => (
+                <label key={interest} className="flex items-center space-x-2">
                   <input
                     type="checkbox"
                     checked={(formData.interests || profile.interests || []).includes(interest)}
                     onChange={(e) => handleInterestChange(interest, e.target.checked)}
-                    className="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 mr-2"
+                    className="rounded border-gray-300 dark:border-gray-600 text-blue-600
+                     focus:ring-blue-500 dark:focus:ring-blue-400 bg-white dark:bg-gray-700"
                   />
-                  <span className="font-medium text-gray-700">{interest}</span>
-                </div>
-              </label>
-            ))}
+                  <span className="text-sm text-gray-700 dark:text-gray-300">{interest}</span>
+                </label>
+              ))}
+            </div>
           </div>
-        </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Description</label>
-          <p className="mt-1 text-sm text-gray-500">
-            Tell us about yourself, your interests, and what you're looking to achieve.
-          </p>
-          <textarea
-            value={formData.description ?? profile.description}
-            onChange={(e) => handleInputChange('description', e.target.value)}
-            rows={4}
-            className="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-            placeholder="Write a brief description about yourself..."
-          />
-        </div>
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Description
+            </label>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Tell us about yourself, your interests, and what you're looking to achieve.
+            </p>
+            <textarea
+              value={formData.description ?? profile.description}
+              onChange={(e) => handleInputChange('description', e.target.value)}
+              rows={4}
+              className="w-full px-3 py-2 rounded-md border border-gray-300
+               dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900
+                dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
+              placeholder="Write a brief description about yourself..."
+            />
+          </div>
 
-        <div className="flex justify-end items-center space-x-4">
-          {isSaving && (
-            <span className="text-sm text-gray-500">
-              Saving changes...
-            </span>
-          )}
-          <button
-            type="submit"
-            disabled={isSaving}
-            className="bg-indigo-600 text-white py-2 px-6 rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50 flex items-center space-x-2"
-          >
-            {isSaving ? (
-              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-            ) : (
-              'Save Changes'
+          <div className="flex justify-end items-center space-x-4">
+            {isSaving && (
+              <span className="text-sm text-gray-500 dark:text-gray-400">
+                Saving changes...
+              </span>
             )}
-          </button>
-        </div>
-      </form>
+            <button
+              type="submit"
+              disabled={isSaving}
+              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700
+               dark:bg-blue-500 dark:hover:bg-blue-600 transition-colors disabled:opacity-50
+                focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
+            >
+              {isSaving ? (
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+              ) : (
+                'Save Changes'
+              )}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
 
-export default Profile; 
+export default Profile;

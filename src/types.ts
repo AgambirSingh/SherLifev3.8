@@ -64,3 +64,4 @@ export interface Confession {
   userVote: 'up' | 'down' | null;
   reports?: number;
 } 
+
