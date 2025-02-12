@@ -6,11 +6,4 @@
 /forgot-password /index.html 200
 /reset-password /index.html 200
 /verify-email /index.html 200
-/profile-setup /index.html 200
-/profile-setup/interests /index.html 200
-/profile-setup/interests/programs-of-study /index.html 200
-/profile-setup/interests/interests /index.html 200
-/profile-setup/interests/description /index.html 200
-/profile-setup/interests/interests /index.html 200
-/profile-setup/interests/description /index.html 200
 
