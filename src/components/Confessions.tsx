@@ -73,7 +73,7 @@ function Confessions() {
           userVote: null,
           isFlagged: false,
           createdAt: new Date(),
-          userId: auth.currentUser.uid
+          
         }
       );
       setNewConfession('');
