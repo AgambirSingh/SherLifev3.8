@@ -37,7 +37,7 @@ const Landing: React.FC = () => {
         <nav className="items-center pt-5 px-4 mx-auto max-w-screen-xl sm:px-8 md:flex md:space-x-6">
           <div className="flex justify-between">
             <a href="/" className="flex items-center space-x-2">
-              <img src="./src/assets/Logo.jpg" alt="Company Logo" className="h-24 w-24" />
+              <img src="./public/Logo.jpg" alt="Company Logo" className="h-24 w-24" />
             </a>
             <button
               className="text-gray-500 outline-none md:hidden"
@@ -94,13 +94,16 @@ const Landing: React.FC = () => {
         </div>
       </section>
 
-      <footer className="text-white py-4">
-        <div className="container mx-auto text-center">
-        <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-indigo-600">
-          Privacy Policy
-        </a>
-
-
+      <footer className="bg-gray-800 text-white py-6 mt-auto">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-col items-center justify-center space-y-2">
+            <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-indigo-600">
+              Privacy Policy
+            </a>
+            <p className="text-gray-400 text-sm">
+              &copy; {new Date().getFullYear()} SherLife. All rights reserved.
+            </p>
+          </div>
         </div>
       </footer>
 

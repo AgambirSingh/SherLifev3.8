@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { ThumbsUp, ThumbsDown, Flag, Search, Send, AlertTriangle } from 'lucide-react';
 import { confessionServices } from '../services/firebase';
+
 import { auth } from '../config/firebase';
 import type { Confession } from '../types';
 
@@ -73,8 +74,7 @@ function Confessions() {
           userVote: null,
           isFlagged: false,
           createdAt: new Date(),
-          
-        }
+ }
       );
       setNewConfession('');
       setSelectedTags([]);
