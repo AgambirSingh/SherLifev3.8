@@ -80,7 +80,7 @@ const Login: React.FC = () => {
   };
 
   if (currentUser) {
-    navigate('/');
+    navigate('/resources');
     return null;
   }
 
