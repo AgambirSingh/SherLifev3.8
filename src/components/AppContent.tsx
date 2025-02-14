@@ -97,6 +97,7 @@ import Events from './Events';
 import Landing from './Landing';
 import Resources from './Resources';
 import Profile from './Profile';
+import { AuthProvider } from '../contexts/AuthContext';
 import PrivacyPolicy from './PrivacyPolicy';
 
 // Check if user is a first-time visitor
@@ -119,7 +120,7 @@ const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const isFirstTimeVisitor = useFirstTimeVisitor();
   
   if (loading) return <LoadingSpinner />;
-  if (user) return <Navigate to="/marketplace" replace />;
+  if (user) return <Navigate to="/resources" replace />;
   // Redirect returning visitors directly to login
   if (!isFirstTimeVisitor && window.location.pathname === '/') {
     return <Navigate to="/login" replace />;
@@ -148,6 +149,7 @@ function AppContent() {
   if (loading) return <LoadingSpinner />;
 
   return (
+    <AuthProvider>
     <Routes>
       {/* Public routes */}
       <Route path="/landing" element={<LandingWrapper />} />
@@ -197,6 +199,7 @@ function AppContent() {
       {/* Catch all route */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
+    </AuthProvider>
   );
 }
 

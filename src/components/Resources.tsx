@@ -1,44 +1,4 @@
-import { BookOpen, Calendar, HeartPulse, Users, Library, GraduationCap} from 'lucide-react';
-
-const RESOURCES = [
-  {
-    title: 'Library Services',
-    description: 'Access online databases, research guides, and book reservations',
-    icon: Library,
-    link: 'https://library.sheridancollege.ca'
-  },
-  {
-    title: 'Academic Calendar',
-    description: 'Important dates, deadlines, and academic schedules',
-    icon: Calendar,
-    link: 'https://www.sheridancollege.ca/admissions/academic-calendar'
-  },
-  {
-    title: 'Student Wellness',
-    description: 'Mental health resources, counseling services, and wellness programs',
-    icon: HeartPulse,
-    link: 'https://central.sheridancollege.ca/student-wellness?check_logged_in=1'
-  },
-  {
-    title: 'Services Hub',
-    description: 'Find answer of any questions',
-    icon: Users,
-    link: 'https://hub.sheridancollege.ca/sheridan-service-hub'
-  },
-  {
-    title: 'Academic Support',
-    description: 'Tutoring services, writing help, and learning resources',
-    icon: BookOpen,
-    link: 'https://www.sheridancollege.ca/student-life/student-services'
-  },
-  {
-    title: 'Career Resources',
-    description: 'Job postings, resume building, and career counseling',
-    icon: GraduationCap,
-    link: 'https://www.sheridancollege.ca/student-life/student-services/career-services'
-  }
-];
-
+import { RESOURCES } from "../data/resources";
 function Resources() {
 
   return (

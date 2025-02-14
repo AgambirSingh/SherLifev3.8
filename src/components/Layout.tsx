@@ -28,10 +28,10 @@ export default function Layout() {
   };
 
   const navItems = [
-    { path: '/marketplace', icon: BookOpen, label: 'Marketplace' },
+    { path: '/resources', icon: Bookmark, label: 'Resources' },
     { path: '/confessions', icon: MessageCircle, label: 'Confessions' },
     { path: '/events', icon: Calendar, label: 'Events' },
-    { path: '/resources', icon: Bookmark, label: 'Resources' },
+    { path: '/marketplace', icon: BookOpen, label: 'Marketplace' },
     { path: '/profile', icon: User, label: 'Profile' },
   ];
 
@@ -54,7 +54,7 @@ export default function Layout() {
       <header className="bg-white dark:bg-gray-800 shadow-sm dark:shadow-gray-900 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <Link to="/marketplace" className="text-xl sm:text-2xl font-bold text-indigo-600 
+            <Link to="/resources" className="text-xl sm:text-2xl font-bold text-indigo-600 
             dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300">
               SherLife
             </Link>

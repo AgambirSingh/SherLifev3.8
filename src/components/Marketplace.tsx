@@ -113,7 +113,7 @@ function Marketplace() {
               ))}
             </div>
             <button
-              onClick={() => alert('Post Item clicked')}
+              onClick={() => window.location.href = 'https://forms.office.com/r/ib9HtBiRWp'}
               className="px-4 py-2 bg-[#013767] dark:bg-blue-600 text-white rounded-lg hover:bg-[#012d56] dark:hover:bg-blue-700 transition-colors text-sm sm:text-base"
             >
               Post Item

@@ -1,141 +1,163 @@
-import React, { useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
+import { Mail, Phone, MapPin } from "lucide-react";
+import HeroIllustration from "./HeroIllustration";
 
 const Landing: React.FC = () => {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [showPrivacyModal, setShowPrivacyModal] = useState(false);
   const navigate = useNavigate();
 
   const handleGetStarted = () => {
-    setShowPrivacyModal(true);
+    navigate("/signup");
   };
-
-  const handleAcceptPrivacy = () => {
-    localStorage.setItem("visited", "true");
-    setShowPrivacyModal(false); 
-    navigate("/signup");        
-  };
-
-  const handleDeclinePrivacy = () => {
-    setShowPrivacyModal(false); 
-  };
-
-  const handleSignIn = () => {
-    navigate("/login");
-  };
-
-  const navigation = [
-    { title: "Customers", path: "/customers" },
-    { title: "Careers", path: "/careers" },
-    { title: "Guides", path: "/guides" },
-    { title: "Partners", path: "/partners" },
-  ];
 
   return (
-    <>
-      <header>
-        <nav className="items-center pt-5 px-4 mx-auto max-w-screen-xl sm:px-8 md:flex md:space-x-6">
-          <div className="flex justify-between">
-            <a href="/" className="flex items-center space-x-2">
-              <img src="./public/Logo.jpg" alt="Company Logo" className="h-24 w-24" />
-            </a>
-            <button
-              className="text-gray-500 outline-none md:hidden"
-              onClick={() => setMenuOpen(!menuOpen)}
-            >
-              {menuOpen ? (
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              ) : (
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-              )}
-            </button>
-          </div>
-          <ul className={`flex-1 justify-between mt-12 md:flex md:mt-0 ${menuOpen ? "" : "hidden"}`}>
-            <li className="order-2 pb-5 md:pb-0">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      {/* Header */}
+      <header className="bg-white dark:bg-gray-800 shadow-sm fixed w-full z-50">
+        <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center">
+              <div className="cursor-pointer flex items-center" onClick={() => {
+                navigate("/");
+                document.getElementById("herosection")?.scrollIntoView({ behavior: "smooth" });
+              }}>
+                <img src="/Logo.jpg" alt="SherLife Logo" className="h-12 w-12" />
+                <span className="ml-2 text-xl font-bold text-gray-900 dark:text-white">SherLife</span>
+              </div>
+            </div>
+            <div className="flex items-center space-x-8">
+              <a href="#about" className="text-gray-600 hover:text-indigo-600 transition-colors">About Us</a>
+              <a href="#contact" className="text-gray-600 hover:text-indigo-600 transition-colors">Contact</a>
               <button
-                onClick={handleSignIn}
-                className="py-3 px-6 rounded-md shadow-md text-white text-center bg-indigo-500 hover:bg-indigo-600 focus:shadow-none block md:inline"
+                onClick={() => navigate("/login")}
+                className="px-4 py-2 rounded-md bg-indigo-600 text-white hover:bg-indigo-700 transition-colors"
               >
                 Sign In
               </button>
-            </li>
-            <div className="order-1 flex-1 justify-center items-center space-y-5 md:flex md:space-x-6 md:space-y-0">
-              {navigation.map((item, idx) => (
-                <li className="text-gray-400 hover:text-indigo-600" key={idx}>
-                  <a href={item.path}>{item.title}</a>
-                </li>
-              ))}
             </div>
-          </ul>
+          </div>
         </nav>
       </header>
 
-      <section className="mt-24 mx-auto max-w-screen-xl pb-12 px-4 items-center lg:flex md:px-8">
-        <div className="space-y-4 flex-1 sm:text-center lg:text-left">
-          <h1 className="text-gray-800 font-bold text-4xl xl:text-5xl">
-            One stop solution for
-            <span className="text-indigo-600"> Sheridan students</span>
-          </h1>
-          <p className="text-gray-500 max-w-xl leading-relaxed sm:mx-auto lg:ml-0">
-            Designed to help students find the right resources and information all in one place.
-          </p>
-          <div className="pt-10 items-center justify-center space-y-3 sm:space-x-6 sm:space-y-0 sm:flex lg:justify-start">
-            <button
-              onClick={handleGetStarted}
-              className="px-7 py-3 w-full bg-indigo-600 text-white text-center rounded-md shadow-md block sm:w-auto hover:bg-indigo-500"
-            >
-              Get Started
-            </button>
+      {/* Hero Section */}
+      <section id="herosection" className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 min-h-screen flex items-center bg-gradient-to-br from-gray-50 to-indigo-50 dark:from-gray-900 dark:to-gray-800">
+        <div className="max-w-7xl mx-auto w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div className="flex flex-col items-start space-y-6">
+              <h1 className="text-5xl sm:text-6xl font-extrabold text-gray-900 dark:text-white leading-tight">
+                Welcome to<br />
+                <span className="text-indigo-600 inline-block mt-2">SherLife</span>
+              </h1>
+              <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-xl">
+                Your one-stop platform for connecting Sheridan students and enhancing campus life. Join our community today!
+              </p>
+              <button
+                onClick={handleGetStarted}
+                className="px-6 py-3 text-lg bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors transform hover:scale-105 duration-200 shadow-lg"
+              >
+                Get Started
+              </button>
+            </div>
+            <div className="relative w-full h-[500px] hidden lg:block">
+              <div className="absolute inset-0 transform hover:scale-105 transition-transform duration-500">
+                <HeroIllustration />
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      <footer className="bg-gray-800 text-white py-6 mt-auto">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col items-center justify-center space-y-2">
-            <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-indigo-600">
-              Privacy Policy
-            </a>
-            <p className="text-gray-400 text-sm">
+      {/* About Us Section */}
+      <section id="about" className="py-20 bg-white dark:bg-gray-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white sm:text-4xl">
+              About Us
+            </h2>
+            <p className="mt-4 max-w-2xl mx-auto text-xl text-gray-500 dark:text-gray-400">
+              SherLife is dedicated to enriching the Sheridan College student experience.
+            </p>
+          </div>
+          <div className="mt-10">
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+              <div className="p-6 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white">Our Mission</h3>
+                <p className="mt-2 text-base text-gray-500 dark:text-gray-400">
+                  To create a vibrant community where Sheridan students can connect, share experiences, and support each other.
+                </p>
+              </div>
+              <div className="p-6 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white">Our Vision</h3>
+                <p className="mt-2 text-base text-gray-500 dark:text-gray-400">
+                  To become the essential platform that enhances student life at Sheridan College through meaningful connections.
+                </p>
+              </div>
+              <div className="p-6 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white">Our Values</h3>
+                <p className="mt-2 text-base text-gray-500 dark:text-gray-400">
+                  Community, Innovation, Inclusivity, and Student Success drive everything we do.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Section */}
+      <section id="contact" className="py-20 bg-gray-50 dark:bg-gray-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white sm:text-4xl">
+              Contact Us
+            </h2>
+            <p className="mt-4 max-w-2xl mx-auto text-xl text-gray-500 dark:text-gray-400">
+              Have questions? We're here to help!
+            </p>
+          </div>
+          <div className="mt-10">
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+              <div className="flex flex-col items-center p-6 bg-white dark:bg-gray-800 rounded-lg">
+                <Mail className="w-8 h-8 text-indigo-600" />
+                <h3 className="mt-4 text-lg font-medium text-gray-900 dark:text-white">Email</h3>
+                <p className="mt-2 text-base text-gray-500 dark:text-gray-400">
+                  support@sherlife.com
+                </p>
+              </div>
+              <div className="flex flex-col items-center p-6 bg-white dark:bg-gray-800 rounded-lg">
+                <Phone className="w-8 h-8 text-indigo-600" />
+                <h3 className="mt-4 text-lg font-medium text-gray-900 dark:text-white">Phone</h3>
+                <p className="mt-2 text-base text-gray-500 dark:text-gray-400">
+                  +1 (123) 456-7890
+                </p>
+              </div>
+              <div className="flex flex-col items-center p-6 bg-white dark:bg-gray-800 rounded-lg">
+                <MapPin className="w-8 h-8 text-indigo-600" />
+                <h3 className="mt-4 text-lg font-medium text-gray-900 dark:text-white">Location</h3>
+                <p className="mt-2 text-base text-gray-500 dark:text-gray-400">
+                  Sheridan College, Brampton, ON
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-white dark:bg-gray-800">
+        <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+          <div className="mt-8 border-t border-gray-200 dark:border-gray-700 pt-8 text-center">
+            <p className="text-base text-gray-400 dark:text-gray-500">
+              <a href="/privacy-policy" className="hover:text-indigo-600 transition-colors">
+                Privacy Policy
+              </a>
+            </p>
+            <p className="mt-4 text-base text-gray-400 dark:text-gray-500">
               &copy; {new Date().getFullYear()} SherLife. All rights reserved.
             </p>
           </div>
         </div>
       </footer>
-
-      {/* Privacy Policy Modal */}
-      {showPrivacyModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white p-6 rounded-2xl shadow-lg max-w-md text-center">
-            <h2 className="text-xl font-semibold mb-4">Privacy Policy Agreement</h2>
-            <p className="text-sm mb-4">
-              By clicking "Accept", you agree to our{" "}
-              <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
-                Privacy Policy
-              </a>.
-            </p>
-            <div className="flex justify-center gap-4">
-              <button
-                onClick={handleAcceptPrivacy}
-                className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-500"
-              >
-                Accept
-              </button>
-              <button
-                onClick={handleDeclinePrivacy}
-                className="px-4 py-2 border border-gray-300 text-gray-500 rounded-md hover:bg-gray-100"
-              >
-                Decline
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </>
+    </div>
   );
 };
 

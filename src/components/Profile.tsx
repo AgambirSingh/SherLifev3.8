@@ -1,13 +1,10 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { Camera } from 'lucide-react';
 import { programOptions, interestOptions } from '../data/profileOptions';
 import { useProfile } from '../hooks/useProfile';
 import type { User } from '../types/user';
 
 function Profile() {
   const { profile, loading, error, updateProfile } = useProfile();
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [formData, setFormData] = useState<Partial<User>>({
@@ -31,18 +28,6 @@ function Profile() {
       });
     }
   }, [profile]);
-
-  const handleImageChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setImageFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  }, []);
 
   const handleInputChange = useCallback((field: keyof User, value: any) => {
     setFormData(prev => ({
@@ -74,7 +59,6 @@ function Profile() {
       const updatedData = {
         ...profile,
         ...formData,
-        photoURL: imagePreview || profile?.photoURL || '/default-avatar.jpg',
         isProfileComplete: true,
         updatedAt: new Date(),
       };
@@ -84,8 +68,7 @@ function Profile() {
           .filter(([_, value]) => value !== undefined && value !== '')
       );
 
-      await updateProfile(cleanedData, imageFile);
-      setImageFile(null);
+      await updateProfile(cleanedData);
       setSuccessMessage('Profile updated successfully!');
       
       setTimeout(() => {
@@ -119,32 +102,6 @@ function Profile() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="flex justify-center mb-6">
-            <div className="relative">
-              <div className="w-32 h-32 rounded-full overflow-hidden border-2 border-gray-200 dark:border-gray-700">
-                <img
-                  src={imagePreview || profile.photoURL || '/default-avatar.jpg'}
-                  alt="Profile"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <label
-                htmlFor="photo-upload"
-                className="absolute bottom-0 right-0 bg-white dark:bg-gray-700 rounded-full p-2 shadow-md cursor-pointer
-                 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors border border-gray-200 dark:border-gray-600"
-              >
-                <Camera className="w-5 h-5 text-gray-600 dark:text-gray-300" />
-                <input
-                  type="file"
-                  id="photo-upload"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className="hidden"
-                />
-              </label>
-            </div>
-          </div>
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -199,27 +156,42 @@ function Profile() {
                  bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2
                   focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
               >
-                <option value="">Select a program</option>
+                <option value="">Select Program</option>
                 {programOptions.map((program) => (
-                  <option key={program} value={program}>{program}</option>
+                  <option key={program} value={program}>
+                    {program}
+                  </option>
                 ))}
               </select>
             </div>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              About Me
+            </label>
+            <textarea
+              value={formData.description ?? profile.description}
+              onChange={(e) => handleInputChange('description', e.target.value)}
+              rows={4}
+              className="w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600
+               bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2
+                focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Interests
             </label>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
               {interestOptions.map((interest) => (
                 <label key={interest} className="flex items-center space-x-2">
                   <input
                     type="checkbox"
-                    checked={(formData.interests || profile.interests || []).includes(interest)}
+                    checked={formData.interests?.includes(interest)}
                     onChange={(e) => handleInterestChange(interest, e.target.checked)}
-                    className="rounded border-gray-300 dark:border-gray-600 text-blue-600
-                     focus:ring-blue-500 dark:focus:ring-blue-400 bg-white dark:bg-gray-700"
+                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                   />
                   <span className="text-sm text-gray-700 dark:text-gray-300">{interest}</span>
                 </label>
@@ -227,42 +199,15 @@ function Profile() {
             </div>
           </div>
 
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Description
-            </label>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              Tell us about yourself, your interests, and what you're looking to achieve.
-            </p>
-            <textarea
-              value={formData.description ?? profile.description}
-              onChange={(e) => handleInputChange('description', e.target.value)}
-              rows={4}
-              className="w-full px-3 py-2 rounded-md border border-gray-300
-               dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900
-                dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
-              placeholder="Write a brief description about yourself..."
-            />
-          </div>
-
-          <div className="flex justify-end items-center space-x-4">
-            {isSaving && (
-              <span className="text-sm text-gray-500 dark:text-gray-400">
-                Saving changes...
-              </span>
-            )}
+          <div className="flex justify-end">
             <button
               type="submit"
               disabled={isSaving}
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700
-               dark:bg-blue-500 dark:hover:bg-blue-600 transition-colors disabled:opacity-50
-                focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
+              className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700
+               focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+                transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isSaving ? (
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-              ) : (
-                'Save Changes'
-              )}
+              {isSaving ? 'Saving...' : 'Save Changes'}
             </button>
           </div>
         </form>

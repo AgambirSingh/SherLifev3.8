@@ -63,11 +63,14 @@ const ResetPassword: React.FC = () => {
             </button>
           </div>
         </form>
-        <div className="text-center mt-4">
-          <Link to="/login" className="text-sm text-indigo-600 hover:text-indigo-500">
-            Remembered your password? Sign in
-          </Link>
-        </div>
+        <div className="text-center">
+            <p className="text-sm text-gray-600">
+              Remembered your password?{' '}
+              <Link to="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
+                Sign in
+              </Link>
+            </p>
+          </div>
       </div>
     </div>
   );
