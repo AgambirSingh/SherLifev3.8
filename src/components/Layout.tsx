@@ -29,9 +29,9 @@ export default function Layout() {
 
   const navItems = [
     { path: '/resources', icon: Bookmark, label: 'Resources' },
-    { path: '/confessions', icon: MessageCircle, label: 'Confessions' },
-    { path: '/events', icon: Calendar, label: 'Events' },
     { path: '/marketplace', icon: BookOpen, label: 'Marketplace' },
+    { path: '/events', icon: Calendar, label: 'Events' },
+    { path: '/confessions', icon: MessageCircle, label: 'Confessions' },
     { path: '/profile', icon: User, label: 'Profile' },
   ];
 

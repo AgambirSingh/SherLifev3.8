@@ -21,7 +21,7 @@ const Landing: React.FC = () => {
                 navigate("/");
                 document.getElementById("herosection")?.scrollIntoView({ behavior: "smooth" });
               }}>
-                <img src="/Logo.jpg" alt="SherLife Logo" className="h-12 w-12" />
+                <img src="/Logo2.jpg" alt="SherLife Logo" className="h-12 w-12" />
                 <span className="ml-2 text-xl font-bold text-gray-900 dark:text-white">SherLife</span>
               </div>
             </div>

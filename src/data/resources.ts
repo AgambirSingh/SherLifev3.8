@@ -11,7 +11,7 @@ export const RESOURCES = [
     title: 'Room Booking',
     description: 'Reserve a study room or group study space',
     icon: Users,
-    link: 'https://sheridancollege.libguides.com/groupstudy'
+    link: 'https://campusportal.ca.infosilem.berger-levrault.com/sheridancollege/p/Home'
     },
     {
     title: 'Library Services',
