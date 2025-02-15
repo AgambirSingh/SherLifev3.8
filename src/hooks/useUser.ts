@@ -11,9 +11,8 @@ interface User {
   userId: string;
   email: string | null;
   photoURL: string | null;
- 
+  emailVerified: boolean;  
 }
-
 interface UserContextType {
   user: User | null;
   loading: boolean;

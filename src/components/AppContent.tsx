@@ -27,6 +27,7 @@ const ProtectedRoute: React.FC = () => {
   
   if (loading) return <LoadingSpinner />;
   if (!user) return <Navigate to="/login" replace />;
+  if (!user.emailVerified) return <Navigate to="/verify-email" replace />;  
   
   return <Outlet />; 
 };

@@ -24,18 +24,20 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
           const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
           const userData = userDoc.data() as User | undefined;
           
-          setUser(userData || {
+          setUser({
+            ...userData,
             userId: firebaseUser.uid,
             email: firebaseUser.email || '',
+            emailVerified: firebaseUser.emailVerified,  
             photoURL: firebaseUser.photoURL || '/default-avatar.jpg',
             isProfileComplete: false,
-            firstName: '',
-            lastName: '',
-            studentId: '',
-            programOfStudy: '',
-            interests: [],
-            description: '',
-            createdAt: new Date(),
+            firstName: userData?.firstName || '',
+            lastName: userData?.lastName || '',
+            studentId: userData?.studentId || '',
+            programOfStudy: userData?.programOfStudy || '',
+            interests: userData?.interests || [],
+            description: userData?.description || '',
+            createdAt: userData?.createdAt || new Date(),
             updatedAt: new Date(),
           });
         } else {
@@ -48,7 +50,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         setLoading(false);
       }
     });
-
+  
     return () => unsubscribe();
   }, []);
 
