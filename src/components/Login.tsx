@@ -37,37 +37,41 @@ const Login: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-
+  
     if (!validateEmail(identifier)) {
-      setError('Please enter a valid email address');
+      setError('Please enter a valid email address.');
       return;
     }
-
+  
     if (password.length < 6) {
-      setError('Password must be at least 6 characters');
+      setError('Password must be at least 6 characters.');
       return;
     }
-
+  
     setIsLoading(true);
-
+  
     try {
       const userCredential = await signInWithEmailAndPassword(auth, identifier, password);
-      if (userCredential.user.emailVerified) {
-        if (rememberMe) {
-          localStorage.setItem('rememberMe', identifier);
-        }
-        navigate('/resources');
-      } else {
-        setError('EMAIL_NOT_VERIFIED');
-        await auth.signOut();
+      const user = userCredential.user;
+  
+      if (!user.emailVerified) {
+        await auth.signOut(); 
+        await user.delete();
+        setError('Your email is not verified. Please check your inbox for a verification email.');
+        return;
       }
+  
+      if (rememberMe) {
+        localStorage.setItem('rememberMe', identifier);
+      }
+  
+      navigate('/resources'); // ✅ Redirect if verified
     } catch (err: any) {
-      setError(getErrorMessage(err.code));
+      setError(getErrorMessage(err.code)); // Handle Firebase Auth errors
     } finally {
       setIsLoading(false);
     }
   };
-
   const handleResendVerification = async () => {
     if (auth.currentUser && !auth.currentUser.emailVerified) {
       try {
