@@ -5,7 +5,7 @@ export const RESOURCES = [
     title: 'Printing Services',
     description: 'Don\'t juggle anywhere else - here you go',
     icon: Printer,
-    link: 'https://papercut.sheridanc.on.ca/app'
+    link: 'https://papercut.sheridancollege.ca/app'
     },
     {
     title: 'Room Booking',
